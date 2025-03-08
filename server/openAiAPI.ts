@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-const OpenAI = require("openai");
 const openai = new OpenAI({
     organization: "org-kmATHO0II7YUN5oacXUQQpvG",
     project: "proj_ENvKq4O4BQUXxphvSPFdzraZ",
