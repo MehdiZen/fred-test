@@ -10,11 +10,15 @@ app.get('/', async (req, res) => {
   res.send("test");
 });
 
+app.post('/api/generateCaption', (req, res) => {
+const {prompt, url} = req.body
+})
+
 app.get('/request', async (req, res) => {
-  const response = await openAiRequest("Ecris en anglais", "https://cdn11.bigcommerce.com/s-sdhub7he5o/images/stencil/1280x1280/products/1596/5390/item_image04__67133.1673460026.jpg?c=1");
+  const response = await openAiRequest("Ecris en anglais", "");
   res.send(response);
 });
+
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
-
 });

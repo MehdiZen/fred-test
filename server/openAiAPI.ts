@@ -1,37 +1,56 @@
 import OpenAI from "openai";
 import type { ChatCompletionContentPartText } from "openai/resources/chat/completions/completions.mjs";
-const openai = new OpenAI({
-    organization: "org-kmATHO0II7YUN5oacXUQQpvG",
-    project: "proj_ENvKq4O4BQUXxphvSPFdzraZ",
-});
 
-export default async function openAiRequest(prompt = "" as String , img = "https://ihe-delft-ihe-website-production.s3.eu-central-1.amazonaws.com/s3fs-public/styles/530x530/public/2022-11/Sea%20level%20rise%20Vietnam.jpg" as ChatCompletionContentPartText["text"] ){
-
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages:[
-      {
-        "role": "user",
-        "content": [
-          {"type": "text", "text": prompt + ". Décris ce que tu vois dans cette image?"},
-          {
-            "type": "image_url",
-            "image_url": {
-              "url": img,
-            },
-          },
-        ],
-      }
-    ],
-    store: true,
-    max_tokens: 300,    
-  },
-);
-console.log(completion.choices[0].message.content);
-// console.log(completion.usage)
-return completion.choices[0].message.content;
+interface IResponseType {
+  caption: string;
 }
 
-// test();
-// exports.completion = test;
-// module.exports={completion}
+const openai = new OpenAI({
+  organization: "org-kmATHO0II7YUN5oacXUQQpvG",
+  project: "proj_ENvKq4O4BQUXxphvSPFdzraZ",
+});
+
+export default async function openAiRequest(
+  prompt = "" as String,
+  img = "" as ChatCompletionContentPartText["text"]
+) {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text:
+                prompt +
+                `. Décris ce que tu vois dans cette image. Ta réponse doit être strictement un JSON valide avec une seule clé 'caption' et sa valeur en texte. Exemple : {"caption": "Un chat noir assis sur un canapé."}`,
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: img,
+              },
+            },
+          ],
+        },
+      ],
+      store: true,
+      max_tokens: 300,
+    });
+    console.log(completion.choices[0].message);
+
+    try {
+      const responseText = completion.choices[0].message.content ?? "";
+      const responseJSON = JSON.parse(responseText) as IResponseType;
+      return responseJSON.caption;
+    } catch (err) {
+      console.error("JSON parsing error:", err);
+      return null;
+    }
+  } catch (err) {
+    console.error(err);
+    return "Image not detected"
+  }
+}
