@@ -25,7 +25,7 @@ export default async function openAiRequest(
               type: "text",
               text:
                 prompt +
-                `. Décris ce que tu vois dans cette image. Ta réponse doit être strictement un JSON valide avec une seule clé 'caption' et sa valeur en texte. Exemple : {"caption": "Un chat noir assis sur un canapé."}`,
+                `. Décris ce que tu vois dans cette image. Essaie d'être précis et de détailler, peut être donne des références et le message ou l'émotion retransmise si possible. Ta réponse doit être strictement un JSON valide avec une seule clé 'caption' et sa valeur en texte. Exemple : {"caption": "Un chat noir assis sur un canapé."}`,
             },
             {
               type: "image_url",
