@@ -199,9 +199,7 @@ export function Welcome() {
               {isUrlValid && (
                 <div className="relative w-full max-w-md mb-6 rounded-lg overflow-hidden shadow-md">
                   <img
-                    src={
-                      !isLoading ? isUrlValid ? imageUrl : "" : "https://i.pinimg.com/originals/3a/ed/77/3aed77679a9fbe28bcae784d8fb831a8.gif"
-                    }
+                    src={isUrlValid ? imageUrl : ""}
                     alt="Image selectionnée"
                     className="w-full h-auto object-cover"
                   />
@@ -221,7 +219,10 @@ export function Welcome() {
                 <div className="w-full">
                   <div className="flex items-start space-x-4 mb-4">
                     <div className="flex-1 p-4 bg-muted/50 rounded-lg">
-                      <p className="font-serif text-lg leading-relaxed italic">
+                      <p
+                        className="font-serif text-lg leading-relaxed italic"
+                        contentEditable="true"
+                      >
                         {IAResponse}
                       </p>
                       <div className="mt-2 text-xs text-right text-muted-foreground">
