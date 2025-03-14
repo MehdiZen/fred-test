@@ -22,22 +22,29 @@ interface IResponse {
 
 export function Welcome() {
   const [image, setImage] = useState<File | null>(null);
+  const [imageB64, setImageB64] = useState<string | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isUrlValid, setIsUrlValid] = useState(false);
-  const [IAResponse, setIAResponse] = useState<string | undefined>(undefined);
+  const [iaResponse, setIaResponse] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImageB64(base64String);
+        setImageUrl("");
+      };
+      reader.readAsDataURL(event.target.files[0]);
       setImage(event.target.files[0]);
-      setImageUrl("");
     }
   };
 
   const handleUrlChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setIAResponse(undefined);
+    setIaResponse(undefined);
     validateUrl(event.target.value);
     setImageUrl(event.target.value);
     setImage(null);
@@ -47,24 +54,22 @@ export function Welcome() {
     event.preventDefault();
     setIsLoading(true);
 
-    if (image) {
-      console.log("Image à envoyer:", image);
-    } else if (imageUrl) {
-      console.log("URL à envoyer:", imageUrl);
+    if (image || imageUrl) {
+      const sentImage = image ? imageB64 : imageUrl;
+
       fetch("http://localhost:3265/api/generateCaption", {
         method: "POST",
         headers: { "Content-Type": "application/JSON" },
-        body: JSON.stringify({ imageUrl }),
+        body: JSON.stringify({ sentImage }),
       })
         .then(async (data) => {
           const response = (await data.json()) as IResponse;
-          console.log(response);
-          setIAResponse(response.caption);
+          setIaResponse(response.caption);
           setIsLoading(false);
         })
         .catch((error) => {
           console.error("Error:", error);
-          setIAResponse(
+          setIaResponse(
             "Une erreur s'est produite lors de l'analyse de l'image."
           );
           setIsLoading(false);
@@ -78,7 +83,6 @@ export function Welcome() {
     const pattern =
       /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
     setIsUrlValid(pattern.test(value));
-    console.log(isUrlValid);
   };
 
   return (
@@ -196,10 +200,10 @@ export function Welcome() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-              {isUrlValid && (
+              {isUrlValid || image && (
                 <div className="relative w-full max-w-md mb-6 rounded-lg overflow-hidden shadow-md">
                   <img
-                    src={isUrlValid ? imageUrl : ""}
+                    src={!image ? imageUrl : imageB64}
                     alt="Image selectionnée"
                     className="w-full h-auto object-cover"
                   />
@@ -215,7 +219,7 @@ export function Welcome() {
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-3/4" />
                 </div>
-              ) : IAResponse ? (
+              ) : iaResponse ? (
                 <div className="w-full">
                   <div className="flex items-start space-x-4 mb-4">
                     <div className="flex-1 p-4 bg-muted/50 rounded-lg">
@@ -223,7 +227,7 @@ export function Welcome() {
                         className="font-serif text-lg leading-relaxed italic"
                         contentEditable="true"
                       >
-                        {IAResponse}
+                        {iaResponse}
                       </p>
                       <div className="mt-2 text-xs text-right text-muted-foreground">
                         {new Date().toLocaleTimeString()}
