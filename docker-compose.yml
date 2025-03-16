@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./client 
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+    networks:
+      - app-network
+
+  backend:
+    container_name: backend
+    build:
+      context: ./server 
+      dockerfile: Dockerfile
+    ports:
+      - "3265:3265"
+
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

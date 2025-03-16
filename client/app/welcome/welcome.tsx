@@ -69,9 +69,7 @@ export function Welcome() {
         })
         .catch((error) => {
           console.error("Error:", error);
-          setIaResponse(
-            "Une erreur s'est produite lors de l'analyse de l'image."
-          );
+          setIaResponse("Agamotto ne semble pas recevoir votre demande.");
           setIsLoading(false);
         });
     } else {
@@ -84,6 +82,7 @@ export function Welcome() {
       /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
     setIsUrlValid(pattern.test(value));
   };
+
 
   return (
     <div className="container mx-auto p-4">
@@ -200,10 +199,10 @@ export function Welcome() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center">
-              {isUrlValid || image && (
+              {(isUrlValid || image) && (
                 <div className="relative w-full max-w-md mb-6 rounded-lg overflow-hidden shadow-md">
                   <img
-                    src={!image ? imageUrl : imageB64}
+                    src={image ? imageB64 : imageUrl}
                     alt="Image selectionnée"
                     className="w-full h-auto object-cover"
                   />
@@ -211,8 +210,11 @@ export function Welcome() {
               )}
 
               {isLoading ? (
-                <div className="w-full space-y-4">
+                <div className="animate-pulse w-full space-y-4">
                   <div className="flex items-center space-x-4"></div>
+                  <span className="text-xl md:text-2xl lg:text-3xl text-center flex items-center justify-center gap-2 bg-clip-text font-serif">
+                    Agamotto is watching...
+                  </span>
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
@@ -226,6 +228,7 @@ export function Welcome() {
                       <p
                         className="font-serif text-lg leading-relaxed italic"
                         contentEditable="true"
+                        
                       >
                         {iaResponse}
                       </p>

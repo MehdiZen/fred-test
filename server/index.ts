@@ -9,8 +9,8 @@ dotenv.config();
 
 const app = express();
 const port = 3265;
-app.use(bodyParser.json({ limit: '10mb' })); 
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '25mb' })); 
+app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
 app.use(fileUpload());
 app.use(cors());
 
