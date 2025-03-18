@@ -15,7 +15,7 @@ app.use(fileUpload());
 app.use(cors());
 
 app.get('/', async (req, res) => {
-  res.send("test");
+  res.send("Server is up and running");
 });
 
 app.post('/api/generateCaption', async (req, res) => {

@@ -16,8 +16,8 @@ const openai = new OpenAI({
 });
 
 export default async function openAiRequest(
-  userPrompt = "" as String,
-  img = "" as ChatCompletionContentPartText["text"],
+  userPrompt: String,
+  img:ChatCompletionContentPartText["text"],
 ) {
   try {
     const completion = await openai.chat.completions.create({
@@ -52,10 +52,10 @@ export default async function openAiRequest(
       return responseJSON;
     } catch (err) {
       console.error("JSON parsing error:", err);
-      return null;
+      return { caption: "Une erreur est survenue, merci de réessayer." };
     }
   } catch (err) {
     console.error(err);
-    return { caption: "Aucune image n'a été détecté, l'oeil se referme..." };
+    return { caption: "Aucune image n'a été détectée, l'œil se referme..." };
   }
 }
