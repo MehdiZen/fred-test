@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import openAiRequest from './openAiAPI.ts'
+import { openAiTitleRequest } from './openAiAPI.ts';
 import fileUpload from 'express-fileupload';
 
 dotenv.config();
@@ -21,6 +22,8 @@ app.get('/', async (req, res) => {
 app.post('/api/generateCaption', async (req, res) => {
 const {sentImage} = req.body
 const response = await openAiRequest("", sentImage);
+const title = await openAiTitleRequest(response.caption);
+console.log(title);
 res.send(response);
 })
 

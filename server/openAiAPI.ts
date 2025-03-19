@@ -15,6 +15,11 @@ const openai = new OpenAI({
   apiKey: apiKey,
 });
 
+interface IResponseTitle {
+  title: string;
+  hashtag: string;
+}
+
 export default async function openAiRequest(
   userPrompt: String,
   img:ChatCompletionContentPartText["text"],
@@ -50,6 +55,41 @@ export default async function openAiRequest(
       const responseText = completion.choices[0].message.content ?? "";
       const responseJSON = JSON.parse(responseText) as IResponseType;
       return responseJSON;
+    } catch (err) {
+      console.error("JSON parsing error:", err);
+      return { caption: "Une erreur est survenue, merci de réessayer." };
+    }
+  } catch (err) {
+    console.error(err);
+    return { caption: "Aucune image n'a été détectée, l'œil se referme..." };
+  }
+}
+
+export async function openAiTitleRequest(
+  description:ChatCompletionContentPartText["text"],
+) {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: [
+            {
+              type: "text",
+              text:"Utilise la description suivante pour me génerer un titre et des hashtags sous le format json suivant: { title : 'Titre trouvé', hashtags: 'hashtags trouvés' }.sans markdown json. Voici la description :" + description
+            },
+          ],
+        },
+      ],
+      store: true,
+      max_tokens: 300,
+    });
+
+    try {
+      const responseText = completion.choices[0].message ?? "";
+      // const responseJSON = JSON.parse(responseText) as IResponseTitle;
+      return responseText;
     } catch (err) {
       console.error("JSON parsing error:", err);
       return { caption: "Une erreur est survenue, merci de réessayer." };
